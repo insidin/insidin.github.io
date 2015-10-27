@@ -1,0 +1,8 @@
+---
+layout: default
+img: sail.png
+category: Services
+title: Start-up investment & management consultancy
+description: |
+---
+  Insidin invests in your ideas. In need of help or advice to get started? Or maybe you just want to have your ideas challenged? Get in touch and let's talk, no strings attached.

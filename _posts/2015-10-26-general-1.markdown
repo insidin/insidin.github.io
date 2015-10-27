@@ -1,0 +1,8 @@
+---
+layout: default
+img: path.JPG
+category: Services
+title: Strategic data consultancy
+description: |
+---
+  Insidin provides hands-on experience in the field of streaming (big) data solutions & architectures. Data today enables innovation and digital transformation. Get in touch and let's talk! 

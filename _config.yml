@@ -1,0 +1,29 @@
+# ----------------------- #
+#      Main Configs       #
+# ----------------------- #
+
+url: http://www.insidin.com
+title: Insidin
+email: jan@insidin.com
+author: Jan Uyttenhove
+description: > # "Inside information to power digital solution innovations and transformations with streaming (big) data solutions & architectures."
+
+# ----------------------- #
+#    Jekyll & Plugins     #
+# ----------------------- #
+
+# Build settings
+markdown: kramdown
+permalink: pretty
+
+# ----------------------- #
+#   3rd Party Settings    #
+# ----------------------- #
+
+social:
+  - title: twitter
+    url: https://twitter.com/xorto
+  - title: github
+    url: https://github.com/insidin
+  - title: linkedin
+    url: https://be.linkedin.com/in/januyttenhove
