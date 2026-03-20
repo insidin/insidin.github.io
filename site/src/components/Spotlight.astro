@@ -1,0 +1,126 @@
+---
+import { getCollection } from 'astro:content';
+
+const MAX_CARDS = 3;
+
+const allTopics = await getCollection('topics');
+const allArticles = await getCollection('articles');
+
+// 1. Curated spotlight topics
+const spotlightTopics = allTopics
+  .filter(t => t.data.spotlight === true)
+  .sort((a, b) => {
+    const da = a.data.spotlightDate ? new Date(a.data.spotlightDate).getTime() : 0;
+    const db = b.data.spotlightDate ? new Date(b.data.spotlightDate).getTime() : 0;
+    return db - da;
+  });
+
+// 2. Latest articles (to fill remaining slots)
+const publishedArticles = allArticles
+  .filter(a => !a.data.draft)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Build the card list: curated first, then latest articles to fill up to MAX_CARDS
+const cards: Array<{ type: 'topic' | 'article'; tag: string; title: string; summary: string; href: string; meta: string }> = [];
+
+// Add curated topics (max 2 to leave room for latest)
+const maxCurated = Math.min(spotlightTopics.length, MAX_CARDS - 1);
+for (let i = 0; i < maxCurated; i++) {
+  const t = spotlightTopics[i];
+  cards.push({
+    type: 'topic',
+    tag: t.data.tags[0] || 'Topic',
+    title: t.data.spotlightTitle || t.data.title,
+    summary: t.data.spotlightSummary || t.data.description,
+    href: `/topics/${t.id}`,
+    meta: 'Explore topic',
+  });
+}
+
+// Fill remaining slots with latest articles (that aren't already represented by a spotlight topic)
+const spotlightTopicIds = new Set(spotlightTopics.slice(0, maxCurated).map(t => t.id));
+for (const article of publishedArticles) {
+  if (cards.length >= MAX_CARDS) break;
+  // Skip if this article's topic is already shown as a curated card
+  if (spotlightTopicIds.has(article.data.topic)) continue;
+  const slug = article.id.split('/').pop();
+  cards.push({
+    type: 'article',
+    tag: article.data.tags[0] || 'Article',
+    title: article.data.title,
+    summary: '', // articles don't have summaries in frontmatter
+    href: `/topics/${article.data.topic}/${slug}`,
+    meta: article.data.readTime,
+  });
+}
+
+// If we still have room (e.g. only 1 curated, 0 non-overlapping articles), fill with more articles
+if (cards.length < MAX_CARDS) {
+  for (const article of publishedArticles) {
+    if (cards.length >= MAX_CARDS) break;
+    const slug = article.id.split('/').pop();
+    const href = `/topics/${article.data.topic}/${slug}`;
+    if (cards.some(c => c.href === href)) continue;
+    cards.push({
+      type: 'article',
+      tag: article.data.tags[0] || 'Article',
+      title: article.data.title,
+      summary: '',
+      href,
+      meta: article.data.readTime,
+    });
+  }
+}
+---
+
+<section id="spotlight" class="bg-surface py-24">
+  <div class="max-w-[1100px] mx-auto px-6">
+    <!-- Section header -->
+    <div class="mb-14">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <span class="w-7 h-px bg-accent"></span>
+        <span class="mono-xs text-accent">Thinking</span>
+      </div>
+      <h2 class="d-l text-primary mb-3">
+        Original thinking. No buzzwords.
+      </h2>
+      <p class="b-l text-muted max-w-[520px]">
+        Position papers, strategic analysis, and critical assessments of what actually matters in data & AI.
+      </p>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid md:grid-cols-3 gap-6">
+      {cards.map(card => (
+        <a
+          href={card.href}
+          class="group bg-white p-8 border-[1.5px] border-primary hover:border-accent transition-colors flex flex-col gap-4"
+          style="border-radius: var(--radius-sm);"
+        >
+          <div>
+            <span class="mono-xs px-2.5 py-1 bg-surface text-muted inline-block" style="border-radius:9999px">
+              {card.tag}
+            </span>
+          </div>
+
+          <h3 class="d-m text-primary group-hover:text-accent transition-colors">
+            {card.title}
+          </h3>
+
+          {card.summary && (
+            <p class="b-m text-muted flex-1">
+              {card.summary}
+            </p>
+          )}
+
+          <div class="flex items-center justify-between text-muted pt-4 border-t border-border mt-auto">
+            <span class="mono-xs">{card.meta}</span>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

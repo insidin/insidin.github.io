@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+
+# Claude working files
+.claude/
+.skills/
+
+# Internal docs (keep locally, don't publish)
+ARCHITECTURE.md
+CONTENT_INTERVIEW.md
+ANNOTATION_CONVENTION.md
+
+# Build artifacts
+site/node_modules/
+site/dist/
+site/dist-preview/
+site/.vscode/
+
+# Working files
+serve.sh
+*.skill
+moodboards/
+preview.html
+demo-preview/
+
+# Generator scripts (if any remain)
+generate_*.py
+site/.astro/

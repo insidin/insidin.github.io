@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+
+const services = await getCollection('services');
+const sortedServices = services.sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="services" class="bg-surface py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <!-- Section header -->
+    <div class="mb-16">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <span class="w-8 h-px bg-accent"></span>
+        <span class="mono-xs text-accent">What we do</span>
+      </div>
+      <h2 class="d-l text-primary mb-4">
+        Services
+      </h2>
+      <p class="b-l text-muted max-w-2xl">
+        Technical depth, business fluency, and the adoption thinking that separates strategies that land from strategies that stall.
+      </p>
+    </div>
+
+    <!-- Service cards -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {sortedServices.map((service) => {
+        const isFeatured = service.data.featured;
+        return (
+          <div
+            class={`p-8 flex flex-col gap-6 ${isFeatured ? 'bg-primary text-white' : 'bg-white border-[1.5px] border-primary'}`}
+            style="border-radius: var(--radius-sm);"
+          >
+            <div
+              class={`w-12 h-12 flex items-center justify-center ${isFeatured ? 'bg-accent/20 text-accent' : 'bg-primary/5 text-primary'}`}
+              style="border-radius: var(--radius-sm);"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+
+            <div>
+              <h3 class={`d-m mb-3 ${isFeatured ? 'text-white' : 'text-primary'}`}>
+                {service.data.title}
+              </h3>
+              <p class={`b-m leading-relaxed ${isFeatured ? 'text-white/70' : 'text-muted'}`}>
+                {service.body}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-auto">
+              {service.data.tags.map(tag => (
+                <span
+                  class={`mono-xs px-2.5 py-1 ${isFeatured ? 'bg-white/10 text-white/70' : 'bg-surface text-muted'}`}
+                  style="border-radius: 9999px;"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {service.data.cta && (
+              <a
+                href={service.data.cta.href}
+                class="d-s text-accent hover:opacity-80 transition-opacity mt-2"
+              >
+                {service.data.cta.label}
+              </a>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
