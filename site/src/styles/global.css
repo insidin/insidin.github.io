@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  /* Final C: Space Grotesk + Polar */
+  --color-primary: #000000;
+  --color-primary-light: #1A1A1A;
+  --color-accent: #38BDF8;
+  --color-accent-dark: #0EA5E9;
+  --color-surface: #F8F9FA;
+  --color-text: #000000;
+  --color-muted: #575F6A;
+  --color-hero-bg: #000000;
+  --color-hero-text: #FFFFFF;
+  --color-hero-muted: #8B939E;
+  --color-border: #D4D8DE;
+  --color-tag-bg: #ECEEF2;
+  --color-tag-text: #575F6A;
+  --color-feat-bg: rgba(56,189,248,0.12);
+  --color-feat-text: #38BDF8;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-sm: 2px;
+}
+
+/* Tailwind color utilities mapping */
+@layer utilities {
+  .text-primary { @apply text-[var(--color-primary)]; }
+  .text-accent { @apply text-[var(--color-accent)]; }
+  .text-muted { @apply text-[var(--color-muted)]; }
+  .text-surface { @apply text-[var(--color-surface)]; }
+
+  .bg-primary { @apply bg-[var(--color-primary)]; }
+  .bg-accent { @apply bg-[var(--color-accent)]; }
+  .bg-surface { @apply bg-[var(--color-surface)]; }
+
+  .border-primary { @apply border-[var(--color-primary)]; }
+  .border-accent { @apply border-[var(--color-accent)]; }
+  .border-border { @apply border-[var(--color-border)]; }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+  }
+}
+
+/* Type scale utilities */
+@layer utilities {
+  .d-xl {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 4.2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .d-l {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .d-m {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .d-s {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .b-l {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .b-m {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+  .b-s {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .mono-xs {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}
+
+/* Article prose styling */
+@layer components {
+  .prose h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--color-primary);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  .prose h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-primary);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose p {
+    color: var(--color-muted);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .prose strong {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+  .prose ul, .prose ol {
+    color: var(--color-muted);
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+  .prose blockquote {
+    border-left: 2px solid var(--color-accent);
+    padding-left: 1.25rem;
+    color: var(--color-muted);
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+}
