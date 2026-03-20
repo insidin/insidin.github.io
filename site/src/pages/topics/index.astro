@@ -1,0 +1,122 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allTopics = await getCollection('topics');
+const allArticles = await getCollection('articles');
+
+// Only show topics that have at least one published article
+const visibleTopics = allTopics.filter(topic => {
+  const topicArticles = allArticles.filter(a => a.data.topic === topic.id && !a.data.draft);
+  return topicArticles.length > 0;
+});
+
+// Collect all unique tags
+const allTags = [...new Set(visibleTopics.flatMap(t => t.data.tags))].sort();
+---
+
+<Layout title="Insights - Insidin" description="Position papers, strategic analysis, and practical frameworks for data & AI transformation.">
+  <section class="pt-32 pb-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <div class="mb-16">
+        <div class="inline-flex items-center gap-2 mb-4">
+          <span class="w-8 h-px bg-accent"></span>
+          <span class="mono-xs text-accent">Insights</span>
+        </div>
+        <h1 class="d-xl text-primary mb-4">Topics</h1>
+        <p class="b-l text-muted max-w-xl">
+          Position papers, strategic analysis, and practical frameworks for data & AI transformation.
+        </p>
+      </div>
+
+      <!-- Tag filter (client-side) -->
+      {allTags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mb-12" id="tag-filters">
+          <button
+            class="mono-xs px-3 py-1.5 border-[1.5px] border-primary bg-primary text-white transition-colors tag-btn active"
+            style="border-radius: 9999px;"
+            data-tag="all"
+          >
+            All
+          </button>
+          {allTags.map(tag => (
+            <button
+              class="mono-xs px-3 py-1.5 border-[1.5px] border-primary text-primary hover:bg-primary hover:text-white transition-colors tag-btn"
+              style="border-radius: 9999px;"
+              data-tag={tag}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <!-- Topic cards -->
+      <div class="grid md:grid-cols-2 gap-8" id="topic-grid">
+        {visibleTopics.map(topic => {
+          const articleCount = allArticles.filter(a => a.data.topic === topic.id && !a.data.draft).length;
+          const docCount = topic.data.documents?.length || 0;
+          return (
+            <a
+              href={`/topics/${topic.id}`}
+              class="group bg-white p-8 border-[1.5px] border-primary hover:border-accent transition-colors flex flex-col gap-4 topic-card"
+              style="border-radius: var(--radius-sm);"
+              data-tags={JSON.stringify(topic.data.tags)}
+            >
+              <div class="flex flex-wrap gap-2">
+                {topic.data.tags.map(tag => (
+                  <span class="mono-xs px-2.5 py-1 bg-surface text-muted" style="border-radius:9999px">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <h2 class="d-m text-primary group-hover:text-accent transition-colors">
+                {topic.data.title}
+              </h2>
+              <p class="b-m text-muted flex-1">
+                {topic.data.description}
+              </p>
+              <div class="flex items-center gap-4 text-muted pt-4 border-t border-border">
+                <span class="mono-xs">{articleCount} article{articleCount !== 1 ? 's' : ''}</span>
+                {docCount > 0 && (
+                  <span class="mono-xs">{docCount} document{docCount !== 1 ? 's' : ''}</span>
+                )}
+                <svg class="w-4 h-4 ml-auto group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const buttons = document.querySelectorAll('.tag-btn');
+  const cards = document.querySelectorAll('.topic-card');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.getAttribute('data-tag');
+
+      buttons.forEach(b => {
+        b.classList.remove('bg-primary', 'text-white', 'active');
+        b.classList.add('text-primary');
+      });
+      btn.classList.add('bg-primary', 'text-white', 'active');
+      btn.classList.remove('text-primary');
+
+      cards.forEach(card => {
+        if (tag === 'all') {
+          (card as HTMLElement).style.display = '';
+        } else {
+          const tags = JSON.parse(card.getAttribute('data-tags') || '[]');
+          (card as HTMLElement).style.display = tags.includes(tag) ? '' : 'none';
+        }
+      });
+    });
+  });
+</script>

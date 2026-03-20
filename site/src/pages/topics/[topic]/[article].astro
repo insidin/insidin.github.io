@@ -1,0 +1,118 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  const topics = await getCollection('topics');
+
+  return articles
+    .filter(a => !a.data.draft)
+    .map(article => {
+      const slug = article.id.split('/').pop()!;
+      const topic = topics.find(t => t.id === article.data.topic);
+      return {
+        params: {
+          topic: article.data.topic,
+          article: slug,
+        },
+        props: { article, topic },
+      };
+    });
+}
+
+const { article, topic } = Astro.props;
+const { Content } = await render(article);
+
+// Get other articles in same topic for navigation
+const allArticles = await getCollection('articles');
+const siblingArticles = allArticles
+  .filter(a => a.data.topic === article.data.topic && !a.data.draft && a.id !== article.id)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<Layout
+  title={`${article.data.title} - Insidin`}
+  description={article.data.title}
+>
+  <article class="pt-32 pb-24 px-6">
+    <div class="max-w-3xl mx-auto">
+
+      <!-- Breadcrumb -->
+      <nav class="mb-8">
+        <ol class="flex items-center gap-2 mono-xs text-muted flex-wrap">
+          <li><a href="/" class="hover:text-accent transition-colors">Insidin</a></li>
+          <li>/</li>
+          <li><a href="/topics" class="hover:text-accent transition-colors">Topics</a></li>
+          <li>/</li>
+          {topic && (
+            <>
+              <li><a href={`/topics/${topic.id}`} class="hover:text-accent transition-colors">{topic.data.title}</a></li>
+              <li>/</li>
+            </>
+          )}
+          <li class="text-primary">{article.data.title}</li>
+        </ol>
+      </nav>
+
+      <!-- Article header -->
+      <header class="mb-12">
+        <div class="flex flex-wrap items-center gap-4 mb-6">
+          {article.data.tags.map(tag => (
+            <span class="mono-xs px-2.5 py-1 bg-surface text-muted" style="border-radius:9999px">
+              {tag}
+            </span>
+          ))}
+        </div>
+        <h1 class="d-xl text-primary mb-4" style="font-size:clamp(2rem,4vw,3rem)">
+          {article.data.title}
+        </h1>
+        <div class="flex items-center gap-4">
+          <span class="mono-xs text-muted">
+            {new Date(article.data.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </span>
+          <span class="mono-xs text-muted">{article.data.readTime}</span>
+        </div>
+      </header>
+
+      <!-- Article body -->
+      <div class="prose max-w-none mb-16">
+        <Content />
+      </div>
+
+      <!-- Related articles in same topic -->
+      {siblingArticles.length > 0 && (
+        <section class="pt-8 border-t border-border mb-8">
+          <div class="mono-xs text-accent mb-6">More on this topic</div>
+          <div class="space-y-4">
+            {siblingArticles.map(sibling => {
+              const slug = sibling.id.split('/').pop();
+              return (
+                <a
+                  href={`/topics/${sibling.data.topic}/${slug}`}
+                  class="group block p-4 border-[1.5px] border-primary hover:border-accent transition-colors"
+                  style="border-radius: var(--radius-sm);"
+                >
+                  <div class="d-s text-primary group-hover:text-accent transition-colors">{sibling.data.title}</div>
+                  <div class="mono-xs text-muted mt-1">{sibling.data.readTime}</div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      <!-- Navigation -->
+      <div class="flex gap-4 pt-8 border-t border-border">
+        {topic && (
+          <a href={`/topics/${topic.id}`} class="d-s text-primary hover:text-accent transition-colors">
+            &larr; {topic.data.title}
+          </a>
+        )}
+        <a href="/topics" class="d-s text-muted hover:text-accent transition-colors ml-auto">
+          All topics
+        </a>
+      </div>
+    </div>
+  </article>
+</Layout>
