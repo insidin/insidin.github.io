@@ -1,0 +1,113 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allTakes = await getCollection('takes');
+const allArticles = await getCollection('articles');
+
+const publishedTakes = allTakes
+  .filter(t => !t.data.draft)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+function resolveArticle(linkedArticle: string | undefined) {
+  if (!linkedArticle) return null;
+  const article = allArticles.find(a => a.id === linkedArticle);
+  if (!article) return null;
+  const slug = article.id.split('/').pop();
+  return {
+    title: article.data.title,
+    href: `/topics/${article.data.topic}/${slug}`,
+  };
+}
+
+const linkedInProfile = 'https://be.linkedin.com/in/januyttenhove';
+---
+
+<Layout title="Takes - Insidin" description="Short takes on data, AI, governance, and what actually works in enterprise transformation.">
+  <section class="pt-32 pb-24 px-6">
+    <div class="max-w-3xl mx-auto">
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="inline-flex items-center gap-2 mb-3">
+          <span class="w-7 h-px bg-accent"></span>
+          <span class="mono-xs text-accent">Takes</span>
+        </div>
+        <h1 class="d-xl text-primary" style="font-size:clamp(2rem,4vw,3rem)">Takes.</h1>
+      </div>
+
+      <!-- Takes feed -->
+      <div>
+        {publishedTakes.map(take => {
+          const linked = resolveArticle(take.data.linkedArticle);
+          const socialLink = take.data.socialLinks?.find(s => s.platform === 'linkedin' && s.url);
+          const discussionUrl = socialLink?.url || linkedInProfile;
+
+          return (
+            <div class="flex gap-5 py-6 border-b border-border">
+              <div class="w-16 shrink-0 pt-0.5">
+                <div class="w-[6px] h-[6px] rounded-full bg-accent mb-2"></div>
+                <span class="mono-xs text-muted">
+                  {new Date(take.data.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                </span>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <p class="d-m text-primary mb-2" style="line-height:1.4">{take.data.hook}</p>
+
+                {take.body && take.body.trim() && (
+                  <div class="b-m text-muted mb-3" style="line-height:1.75">
+                    {take.body.split('\n').filter(l => l.trim()).map(line => (
+                      <p style="margin-bottom:0.5rem">{line}</p>
+                    ))}
+                  </div>
+                )}
+
+                <div class="flex items-center gap-3 flex-wrap">
+                  {take.data.tags.map(tag => (
+                    <span class="mono-xs px-2 py-0.5 bg-surface text-muted" style="border-radius:9999px;font-size:0.6rem">{tag}</span>
+                  ))}
+
+                  {linked && (
+                    <a
+                      href={linked.href}
+                      class="d-s text-primary hover:text-accent transition-colors inline-flex items-center gap-1"
+                      style="font-size:0.75rem"
+                    >
+                      {linked.title} &rarr;
+                    </a>
+                  )}
+
+                  <a
+                    href={discussionUrl}
+                    target="_blank"
+                    rel="noopener"
+                    class="ml-auto inline-flex items-center gap-1.5 mono-xs text-muted hover:text-accent transition-colors"
+                    style="font-size:0.6rem"
+                    title="Join the discussion"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                    Discuss
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Discussion banner -->
+      <div class="flex items-center gap-3 mt-12 p-4 bg-surface" style="border-radius:var(--radius-sm)">
+        <svg class="w-5 h-5 text-muted shrink-0" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        <p class="b-s text-muted">
+          These takes are cross-posted to
+          <a href={linkedInProfile} target="_blank" rel="noopener" class="d-s text-primary hover:text-accent transition-colors">LinkedIn</a>.
+          Join the conversation there.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
