@@ -41,7 +41,7 @@ The answer is not "buy a platform," "approve some tools," or "publish a policy."
 
 Many readers will instinctively question this: what exactly is meant by a business capability, and why would AI-related capabilities belong on a map next to things like Billing, Customer Relationship Management, or Data Governance?
 
-In business architecture, a capability is **not a team, not a process, not a system, and not a project**. It is an enduring ability or capacity the business possesses to achieve a purpose or outcome. The [Business Architecture Guild](https://www.businessarchitectureguild.org/resource/resmgr/bizbok_12/Appendix_A_-_Glossary.pdf) defines it as "a particular ability or capacity that a business may possess or exchange to achieve a specific purpose or outcome." Capability maps describe what the enterprise must be able to do, regardless of which department owns it, which workflow performs it, or which technologies support it.
+In business architecture, a capability is **not a team, not a process, not a system, and not a project**. It is an enduring ability or capacity the business possesses to achieve a purpose or outcome. In “[A Business-Oriented Foundation for Service Orientation](https://cdn.ymaws.com/www.businessarchitectureguild.org/resource/resmgr/homann_article_on_capabiliti.pdf)”, Ulrich Homann defines it as "a particular ability or capacity that a business may possess or exchange to achieve a specific purpose or outcome." Capability maps describe what the enterprise must be able to do, regardless of which department owns it, which workflow performs it, or which technologies support it.
 
 Once that definition is clear, the case for putting AI on the capability map becomes much stronger.
 

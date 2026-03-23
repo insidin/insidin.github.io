@@ -63,4 +63,19 @@ const articles = defineCollection({
   }),
 });
 
-export const collections = { sitePages, services, topics, articles };
+const takes = defineCollection({
+  loader: glob({ pattern: '*.md', base: `${contentBase}/takes` }),
+  schema: z.object({
+    hook: z.string(),
+    date: z.coerce.date(),
+    tags: z.array(z.string()),
+    linkedArticle: z.string().optional(),
+    socialLinks: z.array(z.object({
+      platform: z.string(),
+      url: z.string(),
+    })).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { sitePages, services, topics, articles, takes };
