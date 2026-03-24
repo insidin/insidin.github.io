@@ -5,7 +5,7 @@ tags: ["ai-strategy", "capability-map", "ai-governance", "enterprise-architectur
 linkedArticle: "ai-strategy/ai-capability-map"
 socialLinks:
   - platform: "linkedin"
-    url: ""
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7441903850216701953/?originTrackingId=tvmhgxUz46Arnr1PrV18ig%3D%3D"
 draft: false
 ---
 
