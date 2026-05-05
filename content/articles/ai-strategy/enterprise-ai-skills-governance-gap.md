@@ -2,7 +2,7 @@
 title: "Enterprise AI Skills: The Governance Gap Nobody Is Closing"
 date: 2026-05-05
 topic: "ai-strategy"
-tags: ["ai-strategy", "agentic AI", "governance", "risk management", "enterprise-architecture"]
+tags: ["ai-strategy", "agentic AI", "ai governance", "ai risk", "risk management", "skills"]
 readTime: "5 min"
 draft: false
 ---
