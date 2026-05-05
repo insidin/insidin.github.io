@@ -23,6 +23,10 @@ moodboards/
 preview.html
 demo-preview/
 
-# Generator scripts (if any remain)
+# Generator scripts and source assets
 generate_*.py
+enterprise_ai_skills_architecture.png
+enterprise_ai_skills_website_post.md
+
+# Astro generated
 site/.astro/
