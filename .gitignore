@@ -17,6 +17,8 @@ site/dist-preview/
 site/.vscode/
 
 # Working files
+upload/
+documents/
 serve.sh
 *.skill
 moodboards/
