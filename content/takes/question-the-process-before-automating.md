@@ -3,9 +3,9 @@ hook: "We ask which parts of a process AI can automate. How often do we ask whet
 date: 2026-10-22
 tags: ["ai-strategy", "process automation", "ai-governance", "organizational design"]
 linkedArticle: "ai-strategy/question-the-process-before-automating"
-# socialLinks:
-#   - platform: "linkedin"
-#     url: "ADD LINKEDIN POST URL"
+socialLinks:
+  - platform: "linkedin"
+    url: "https://www.linkedin.com/posts/januyttenhove_ai-aigovernance-processautomation-activity-7519040302561669120-nWYP"
 draft: false
 ---
 
