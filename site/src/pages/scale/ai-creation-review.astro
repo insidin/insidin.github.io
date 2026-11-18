@@ -1,0 +1,664 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { CREATION, REVIEW, SCALE_NAME } from '../../lib/cr-scale.js';
+
+const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
+---
+
+<Layout
+  title={`${SCALE_NAME} - Insidin`}
+  description="Understand a C/R indicator at a glance: C0 to C4 describe how AI contributed to creating content; R0 to R4 describe how a human reviewed the result."
+>
+  <section class="pt-32 pb-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <!-- Header -->
+      <div class="inline-flex items-center gap-2 mb-5">
+        <span class="w-7 h-px bg-accent"></span>
+        <span class="mono-xs text-accent">Tool</span>
+      </div>
+
+      <div class="flex items-center gap-5 mb-4">
+        <span class="cr-logo" aria-label="AI creation and review"><i>AI</i><b>c/r</b></span>
+        <div>
+          <h1 class="d-l text-primary">{SCALE_NAME}</h1>
+          <p class="b-m text-muted mt-1">How AI contributed to the content. How a human reviewed the result.</p>
+        </div>
+      </div>
+
+      <p class="b-m text-muted mb-8" style="max-width:44rem">
+        A C/R label on a slide, document or post tells you two separate things: how AI contributed to creating the
+        content (C), and how thoroughly a person reviewed the final result (R). Find the meaning of any combination below.
+      </p>
+
+      <!-- Personalised view: filled in from ?c=&r= by the script below -->
+      <section id="your-badge" class="cr-your" hidden aria-live="polite">
+        <p class="mono-xs text-accent mb-2">This badge</p>
+        <h2 class="cr-your-title"><span id="yb-code"></span></h2>
+        <div class="cr-your-grid">
+          <div class="cr-your-c">
+            <span class="cr-your-cap">Creation</span>
+            <strong id="yb-c-name"></strong>
+            <p id="yb-c-text"></p>
+          </div>
+          <div class="cr-your-r">
+            <span class="cr-your-cap">Review</span>
+            <strong id="yb-r-name"></strong>
+            <p id="yb-r-text"></p>
+          </div>
+        </div>
+        <p id="yb-reader" class="cr-your-reader"></p>
+        <p class="cr-small">The label describes the process behind this content. It does not rate its quality and does not guarantee correctness. The full scale is below.</p>
+      </section>
+
+      <!-- Quick-reference table -->
+      <table class="cr-table" id="scales">
+        <caption class="cr-caption">
+          Find the C value and the R value separately. Together, they describe how the content was made and reviewed.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col" class="cr-th-c">
+              <span class="cr-th-title">C · Creation</span>
+              <span class="cr-th-sub">AI involvement alongside human input</span>
+            </th>
+            <th scope="col" class="cr-th-r">
+              <span class="cr-th-title">R · Review</span>
+              <span class="cr-th-sub">Human examination of the final result</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(({ c, r }) => (
+            <tr>
+              <td id={c.code.toLowerCase()}>
+                <div class="cr-cell-head"><b>{c.code}</b><strong>{c.name}</strong></div>
+                <p>{c.text}</p>
+              </td>
+              <td id={r.code.toLowerCase()}>
+                <div class="cr-cell-head"><b>{r.code}</b><strong>{r.name}</strong></div>
+                <p>{r.text}</p>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <!-- Three notes -->
+      <div class="cr-notes">
+        <p><strong>Two independent values.</strong> Any C can combine with any R. More AI involvement does not mean less human expertise.</p>
+        <p><strong>Human review only.</strong> AI can assist a reviewer. A check performed only by AI does not raise the R level.</p>
+        <p><strong>Information, not certification.</strong> Apply the label to the final version and stated scope. It describes the process, without guaranteeing correctness.</p>
+      </div>
+
+      <!-- What and why -->
+      <section class="cr-section">
+        <h2 class="d-m text-primary mb-3">What it tells you, and why it matters</h2>
+        <div class="prose">
+          <p>
+            This indicator separates <strong>AI involvement in creation</strong> from <strong>human review of the result</strong>.
+            A person can supply substantial knowledge and experience while AI writes most of the words. Equally, an
+            AI-originated draft can undergo thorough human review.
+          </p>
+          <p>
+            A single "AI-generated" label hides those differences. C/R makes both visible, so readers can tell an unread
+            draft from content that someone has examined, checked and approved. It describes the process, not a quality
+            score or a percentage of human effort. It does not quantify intelligence, establish IP ownership or guarantee
+            correctness.
+          </p>
+        </div>
+      </section>
+
+      <!-- Placement -->
+      <section class="cr-section">
+        <h2 class="d-m text-primary mb-3">Use it in presentations and documents</h2>
+        <table class="cr-placement">
+          <thead>
+            <tr><th scope="col">Where</th><th scope="col">What to include</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Slide or page footer</strong></td>
+              <td>The small badge, with the one-line caption next to it. The caption names the scale, so readers can find this page even if the link is lost.</td>
+            </tr>
+            <tr>
+              <td><strong>Opening or closing slide, or document introduction</strong></td>
+              <td>The disclosure panel or note: badge, creator and reviewer, scope, artifact version, review date, and any relevant checks or limitations.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="prose mt-4">
+          <p>
+            Where sections differ, label them separately rather than averaging. The badge is a link: the "i" shows that
+            it leads to an explanation of exactly that C and R combination. Screenshots and print lose links, which is why
+            the caption always carries the scale name. In desktop PowerPoint or Word, insert the badge as a picture and
+            add the hyperlink to the picture itself; links embedded in the SVG may not survive the import. Check the link
+            again after exporting to PDF.
+          </p>
+        </div>
+      </section>
+
+      <!-- Generator -->
+      <details class="cr-generator" id="badge-tool">
+        <summary>Create a badge and disclosure note</summary>
+        <div class="cr-gen-body">
+          <div class="cr-row-2">
+            <label>
+              <span class="cr-label">Creation</span>
+              <select id="c-select">
+                {CREATION.map((c, i) => <option value={i} selected={i === 2}>{c.code} · {c.name}</option>)}
+              </select>
+            </label>
+            <label>
+              <span class="cr-label">Review</span>
+              <select id="r-select">
+                {REVIEW.map((r, i) => <option value={i} selected={i === 2}>{r.code} · {r.name}</option>)}
+              </select>
+            </label>
+          </div>
+
+          <div class="cr-row-2">
+          <label>
+            <span class="cr-label">Badge style</span>
+            <select id="style">
+              <option value="strip">Codes · AI c/r, C3, R4</option>
+              <option value="scales">Scales · shows the position on each scale</option>
+              <option value="seal">Seal · round, for corners and covers</option>
+            </select>
+          </label>
+          <label>
+            <span class="cr-label">Format</span>
+            <select id="format">
+              <option value="compact">Badge · footer or margin</option>
+              <option value="panel">Disclosure panel · slide or document section</option>
+            </select>
+          </label>
+          </div>
+
+          <div class="cr-row-2">
+            <label><span class="cr-label">Creator <i>Optional</i></span><input id="creator" maxlength="100" placeholder="Person who shaped the content" /></label>
+            <label><span class="cr-label">Human reviewer <i>Optional</i></span><input id="reviewer" maxlength="100" placeholder="Person who performed the review" /></label>
+            <label><span class="cr-label">Artifact version <i>Optional</i></span><input id="artifact" maxlength="120" placeholder="e.g. Strategy paper v1.2" /></label>
+            <label><span class="cr-label">Review date <i>Optional</i></span><input id="review-date" type="date" /></label>
+          </div>
+          <label><span class="cr-label">Scope <i>Optional</i></span><input id="scope" maxlength="250" placeholder="e.g. Main text and diagrams; appendix excluded" /></label>
+          <label><span class="cr-label">Intended use <i>Optional</i></span><input id="purpose" maxlength="250" placeholder="e.g. Architecture discussion" /></label>
+          <label><span class="cr-label">Checks and limitations <i>Optional</i></span><textarea id="checks" rows="3" maxlength="1000" placeholder="What was checked, and what remains uncertain?"></textarea></label>
+
+          <p class="cr-small">
+            Everything is processed in your browser; nothing is sent or stored. The generator does not verify anyone's
+            review: a blank field makes no claim. The badge itself carries only the two values. Names and other details
+            appear in the disclosure panel and in the text below.
+          </p>
+
+          <div id="badge" class="cr-preview" aria-live="polite"></div>
+          <span class="cr-label">Text to place next to the badge</span>
+          <pre id="disclosure" class="cr-note"></pre>
+          <span class="cr-label">Hyperlink for the badge</span>
+          <pre id="link" class="cr-note"></pre>
+
+          <div class="cr-actions">
+            <button id="download-svg" type="button">Download SVG</button>
+            <button id="download-png" type="button" class="secondary">Download PNG</button>
+            <button id="copy" type="button" class="secondary">Copy text</button>
+            <button id="copy-link" type="button" class="secondary">Copy link</button>
+          </div>
+          <p id="status" class="cr-status" role="status"></p>
+          <p class="cr-small">
+            Use PNG where SVG is not supported (older Office versions). A PNG or SVG pasted into a document needs the
+            hyperlink added to the picture; copy it from above. Keep the caption with the badge.
+          </p>
+        </div>
+      </details>
+
+      <!-- FAQ -->
+      <section class="cr-section">
+        <h2 class="d-m text-primary mb-3">Questions &amp; answers</h2>
+        <div class="cr-faq">
+          <details>
+            <summary>Does a review by another AI count?</summary>
+            <p>R measures human review. Another AI can help find issues, but an AI-only check does not raise the R level. Choose the level that matches what a person actually examined and checked.</p>
+          </details>
+          <details>
+            <summary>Does more AI involvement mean less human expertise?</summary>
+            <p>No. C3 explicitly recognises substantial human knowledge, experience and reasoning, expressed through AI. The creation categories do not rank intelligence or professional value.</p>
+          </details>
+          <details>
+            <summary>Does R4 guarantee correctness?</summary>
+            <p>No. It means full human review, relevant checks and approval for sharing. It is a process declaration, not certification or a promise that every claim is error-free.</p>
+          </details>
+          <details>
+            <summary>What if the content changes, or only some sections were reviewed?</summary>
+            <p>Apply the label to a specific final version and scope. Reassess the review after substantive edits. Label materially different sections separately rather than averaging their levels.</p>
+          </details>
+          <details>
+            <summary>Should I add names, and why does every badge link here?</summary>
+            <p>A reviewer or creator name is optional, but useful when the badge may travel separately from the document. They are different roles, so the badge states which one it shows. The link is fixed on purpose, and carries only the C and R values, so a reader lands on the explanation of exactly that label. Names and other details never travel in the link.</p>
+          </details>
+          <details>
+            <summary>How was this explanation created?</summary>
+            <p><strong>C3/R4, as declared by Jan Uyttenhove.</strong> Human direction and expertise shaped the explanation; AI assisted research, drafting and implementation. The review declaration concerns the explanation, not independent certification or testing of the website code.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- Declaration and licence -->
+      <div class="cr-declaration">
+        <p><strong>This explanation: C3/R4.</strong> Declared by Jan Uyttenhove.</p>
+        <p>
+          © 2026 Insidin BV ·
+          <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>
+          for original content and design.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Brand tokens come from global.css: black, sky-blue accent, cool greys, 2px radius. */
+  .cr-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    background: var(--color-primary);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    line-height: 1;
+  }
+  .cr-logo i { font-style: normal; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.16em; color: #fff; margin-bottom: 0.25rem; padding-left: 0.16em; }
+  .cr-logo b { font-weight: 700; font-size: 1.35rem; letter-spacing: -0.06em; color: var(--color-accent); }
+
+  /* Personalised view for links like ?c=3&r=4 */
+  .cr-your {
+    border: 1.5px solid var(--color-primary);
+    border-left: 4px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    background: #fff;
+  }
+  .cr-your[hidden] { display: none; }
+  .cr-your-title { font-family: var(--font-display); font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; margin: 0 0 1rem; }
+  .cr-your-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .cr-your-c, .cr-your-r { padding: 0.9rem 1rem; border-radius: var(--radius-sm); }
+  .cr-your-c { background: var(--color-surface); border: 1px solid var(--color-border); }
+  .cr-your-r { background: var(--color-feat-bg); border: 1px solid var(--color-accent); }
+  .cr-your-cap { display: block; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 0.2rem; }
+  .cr-your strong { font-family: var(--font-display); font-size: 1.1rem; color: var(--color-primary); }
+  .cr-your-grid p { margin: 0.3rem 0 0; font-size: 0.875rem; line-height: 1.55; color: var(--color-muted); }
+  .cr-your-reader { margin: 1rem 0 0.25rem; font-size: 0.95rem; line-height: 1.6; color: var(--color-primary); }
+  .cr-table td.cr-on { background: rgba(56, 189, 248, 0.16); box-shadow: inset 3px 0 0 var(--color-accent); }
+
+  /* Quick-reference table: the main visual priority */
+  .cr-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1.5px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    background: #fff;
+  }
+  .cr-caption {
+    caption-side: top;
+    text-align: left;
+    padding: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+  .cr-table th {
+    text-align: left;
+    padding: 0.85rem 1.25rem;
+  }
+  .cr-th-c { background: var(--color-primary); color: #fff; }
+  .cr-th-r { background: var(--color-accent); color: var(--color-primary); }
+  .cr-th-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+  .cr-th-sub { display: block; font-size: 0.75rem; font-weight: 400; margin-top: 0.1rem; opacity: 0.8; }
+  .cr-table td {
+    vertical-align: top;
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .cr-table td:first-child { border-right: 1px solid var(--color-border); }
+  .cr-table td:target { background: rgba(56, 189, 248, 0.12); }
+  .cr-cell-head { display: flex; align-items: baseline; gap: 0.75rem; }
+  .cr-cell-head b {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.9rem;
+    min-width: 1.6rem;
+    color: var(--color-primary);
+  }
+  .cr-cell-head strong {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-primary);
+  }
+  .cr-table td p {
+    margin: 0.3rem 0 0 2.35rem;
+    color: var(--color-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .cr-notes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 1.5rem 0 0;
+  }
+  .cr-notes p { font-size: 0.8125rem; line-height: 1.55; color: var(--color-muted); margin: 0; }
+  .cr-notes strong { display: block; color: var(--color-primary); margin-bottom: 0.2rem; font-family: var(--font-display); }
+
+  .cr-section { border-top: 1px solid var(--color-border); margin-top: 2.5rem; padding-top: 2rem; }
+
+  .cr-placement {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+  .cr-placement th {
+    text-align: left;
+    background: var(--color-surface);
+    padding: 0.6rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .cr-placement td {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .cr-placement td:first-child { width: 31%; color: var(--color-primary); }
+
+  /* Generator */
+  .cr-generator {
+    margin-top: 2.5rem;
+    border: 1.5px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+  }
+  .cr-generator > summary {
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+  }
+  .cr-generator[open] > summary { border-bottom: 1px solid var(--color-border); }
+  .cr-generator > summary:hover { color: var(--color-accent-dark); }
+  .cr-gen-body { padding: 1.25rem; max-width: 52rem; }
+  .cr-gen-body label { display: block; margin-bottom: 1rem; }
+  .cr-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  .cr-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .cr-label i { font-style: normal; margin-left: 0.4rem; text-transform: none; letter-spacing: 0; opacity: 0.8; }
+  .cr-gen-body select,
+  .cr-gen-body input,
+  .cr-gen-body textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.35rem;
+    padding: 0.6rem 0.7rem;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--color-primary);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+  .cr-gen-body textarea { resize: vertical; }
+  .cr-gen-body input:disabled { background: var(--color-surface); opacity: 0.55; }
+  .cr-gen-body select:focus,
+  .cr-gen-body input:focus,
+  .cr-gen-body textarea:focus { outline: 2px solid var(--color-accent); outline-offset: 1px; border-color: var(--color-accent); }
+
+  .cr-small { font-size: 0.75rem; line-height: 1.55; color: var(--color-muted); margin: 0.5rem 0; }
+  .cr-small strong { color: var(--color-primary); }
+  .cr-preview { margin: 1.25rem 0 0.75rem; overflow: auto; }
+  .cr-preview :global(svg) { display: block; max-width: 100%; height: auto; }
+  .cr-note {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.65;
+    color: var(--color-primary);
+  }
+  .cr-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+  .cr-actions button {
+    cursor: pointer;
+    padding: 0.6rem 1.1rem;
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--color-primary);
+    border: 1.5px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    transition: opacity 0.15s;
+  }
+  .cr-actions button.secondary { color: var(--color-primary); background: #fff; }
+  .cr-actions button:hover { opacity: 0.85; }
+  .cr-status { min-height: 1.2em; font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
+
+  /* FAQ */
+  .cr-faq details { border-top: 1px solid var(--color-border); padding: 0.85rem 0; }
+  .cr-faq details:last-child { border-bottom: 1px solid var(--color-border); }
+  .cr-faq summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; }
+  .cr-faq summary:hover { color: var(--color-accent-dark); }
+  .cr-faq p { margin: 0.6rem 0 0; max-width: 46rem; font-size: 0.875rem; line-height: 1.65; color: var(--color-muted); }
+  .cr-faq p strong { color: var(--color-primary); }
+
+  .cr-origins p { font-size: 0.875rem; line-height: 1.65; color: var(--color-muted); margin: 0 0 0.6rem; max-width: 52rem; }
+  .cr-origins strong { color: var(--color-primary); }
+  .cr-origins a,
+  .cr-declaration a,
+  .cr-small a {
+    color: var(--color-primary);
+    text-decoration: underline dotted var(--color-accent);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1.5px;
+  }
+  .cr-origins a:hover,
+  .cr-declaration a:hover { text-decoration-style: solid; }
+
+  .cr-declaration {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-surface);
+    border-radius: var(--radius-sm);
+  }
+  .cr-declaration p { margin: 0.15rem 0; font-size: 0.75rem; color: var(--color-muted); line-height: 1.55; }
+  .cr-declaration strong { color: var(--color-primary); }
+
+  :global(.cr-generator summary:focus-visible),
+  .cr-faq summary:focus-visible,
+  .cr-actions button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+  @media (max-width: 650px) {
+    .cr-table th, .cr-table td { padding: 0.65rem; }
+    .cr-th-title { font-size: 1rem; }
+    .cr-th-sub { font-size: 0.65rem; }
+    .cr-cell-head { flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+    .cr-cell-head strong { font-size: 0.8125rem; }
+    .cr-table td p { margin: 0.3rem 0 0; font-size: 0.7rem; line-height: 1.4; }
+    .cr-notes { grid-template-columns: 1fr; gap: 0.75rem; }
+    .cr-row-2 { grid-template-columns: 1fr; }
+    .cr-your-grid { grid-template-columns: 1fr; }
+    .cr-placement td:first-child { width: 35%; }
+    .cr-logo { width: 48px; height: 48px; }
+    .cr-logo b { font-size: 1.1rem; }
+  }
+
+  @media print {
+    .cr-generator { display: none; }
+    .cr-table, .cr-section, .cr-faq details { break-inside: avoid; }
+    .cr-faq details > p { display: block; }
+  }
+</style>
+
+<script>
+  import { makeSVG, noteFor } from '../../lib/cr-badge.js';
+  import * as cr from '../../lib/cr-scale.js';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement;
+  const fields = ['c-select', 'r-select', 'style', 'format', 'creator', 'reviewer', 'artifact', 'review-date', 'scope', 'purpose', 'checks'];
+
+  function data() {
+    return {
+      c: Number($('c-select').value),
+      r: Number($('r-select').value),
+      style: $('style').value,
+      format: $('format').value,
+      creator: $('creator').value.trim(),
+      reviewer: $('reviewer').value.trim(),
+      artifact: $('artifact').value.trim(),
+      date: $('review-date').value,
+      scope: $('scope').value.trim(),
+      purpose: $('purpose').value.trim(),
+      checks: $('checks').value.trim(),
+    };
+  }
+
+  function render() {
+    const d = data();
+    // Without a review there is no reviewer and no review date.
+    $('reviewer').disabled = d.r === 0;
+    $('review-date').disabled = d.r === 0;
+    const svg = makeSVG(d);
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    $('badge').replaceChildren(document.importNode(doc.documentElement, true));
+    $('disclosure').textContent = noteFor(d);
+    $('link').textContent = cr.referenceFor(d.c, d.r);
+  }
+
+  function save(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  const filename = (d: ReturnType<typeof data>, ext: string) => `ai-creation-review-C${d.c}-R${d.r}-${d.style}-${d.format}.${ext}`;
+
+  for (const id of fields) {
+    $(id).addEventListener('input', () => {
+      $('status').textContent = '';
+      render();
+    });
+  }
+
+  $('copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(noteFor(data()));
+      $('status').textContent = 'Text copied. Paste it beside the badge.';
+    } catch {
+      $('status').textContent = 'Clipboard unavailable. Select and copy the text above.';
+    }
+  });
+
+  $('copy-link').addEventListener('click', async () => {
+    const d = data();
+    try {
+      await navigator.clipboard.writeText(cr.referenceFor(d.c, d.r));
+      $('status').textContent = 'Link copied. Add it as the hyperlink on the badge picture.';
+    } catch {
+      $('status').textContent = 'Clipboard unavailable. Select and copy the link above.';
+    }
+  });
+
+  $('download-svg').addEventListener('click', () => {
+    const d = data();
+    save(new Blob([makeSVG(d)], { type: 'image/svg+xml' }), filename(d, 'svg'));
+    $('status').textContent = 'SVG downloaded. In PowerPoint or Word, add the hyperlink to the inserted picture (copy it with Copy link).';
+  });
+
+  $('download-png').addEventListener('click', () => {
+    const d = data();
+    const svg = makeSVG(d);
+    const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+    const img = new Image();
+    img.onload = () => {
+      const scale = 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.scale(scale, scale);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        save(blob, filename(d, 'png'));
+        $('status').textContent = 'PNG downloaded. Add the hyperlink to the inserted picture; PNG files carry no link themselves.';
+      }, 'image/png');
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      $('status').textContent = 'PNG export failed in this browser. Use the SVG download instead.';
+    };
+    img.src = url;
+  });
+
+  // Personalised view: ?c=3&r=4 shows the meaning of that exact badge and highlights it in the table.
+  const params = new URLSearchParams(location.search);
+  const pc = params.get('c');
+  const pr = params.get('r');
+  if (pc !== null && pr !== null && /^[0-4]$/.test(pc) && /^[0-4]$/.test(pr)) {
+    const ci = Number(pc);
+    const ri = Number(pr);
+    const el = (id: string) => document.getElementById(id) as HTMLElement;
+    const row = (code: string) => document.getElementById(code.toLowerCase());
+    el('yb-code').textContent = `C${ci} / R${ri}`;
+    el('yb-c-name').textContent = cr.CREATION[ci].name;
+    el('yb-c-text').textContent = cr.CREATION[ci].text;
+    el('yb-r-name').textContent = cr.REVIEW[ri].name;
+    el('yb-r-text').textContent = cr.REVIEW[ri].text;
+    el('yb-reader').textContent = `In short: ${cr.CREATION[ci].name.toLowerCase()} content. ${cr.REVIEW[ri].reader}`;
+    el('your-badge').hidden = false;
+    row(`C${ci}`)?.classList.add('cr-on');
+    row(`R${ri}`)?.classList.add('cr-on');
+    // Preselect the generator so the visitor can build the same badge.
+    $('c-select').value = String(ci);
+    $('r-select').value = String(ri);
+    document.title = `C${ci}/R${ri} · ${cr.CREATION[ci].name}, ${cr.REVIEW[ri].name} - Insidin`;
+  }
+
+  render();
+</script>
