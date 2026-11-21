@@ -29,6 +29,10 @@ const rows = MADE.map((m, i) => ({ m, c: CHECKED[i] }));
         An AI MC label on a slide, document or post tells you two separate things: how AI contributed to making the
         content (M), and how far a person checked the final result (C). Find the meaning of any combination below.
       </p>
+      <p class="cr-aside">
+        Yes, MC is also the master of ceremonies. That is intended. AI increasingly runs the show in how content gets
+        made, and this label shows who is still holding the microphone.
+      </p>
 
       <!-- Personalised view: filled in from ?m=&c= by the script below -->
       <section id="your-badge" class="cr-your" hidden aria-live="polite">
@@ -232,6 +236,10 @@ const rows = MADE.map((m, i) => ({ m, c: CHECKED[i] }));
       <section class="cr-section">
         <h2 class="d-m text-primary mb-3">Questions &amp; answers</h2>
         <div class="cr-faq">
+          <details>
+            <summary>Why "MC"?</summary>
+            <p>M for Made, C for Checked. And yes, MC also stands for master of ceremonies, which we find fitting. As AI takes over more of the making, someone has to stay in charge of the result. The label makes visible how much AI did, and whether a person was still there to check it. The human should remain the MC.</p>
+          </details>
           <details>
             <summary>Does a check by another AI count?</summary>
             <p>C measures what a person did. Another AI can help find issues, but an AI-only check does not raise the C level. Choose the level that matches what a person actually read and checked.</p>
@@ -472,6 +480,16 @@ const rows = MADE.map((m, i) => ({ m, c: CHECKED[i] }));
   .cr-color-pair input[type='color'] { width: 2.75rem; height: 2.4rem; padding: 0.15rem; margin: 0; flex-shrink: 0; cursor: pointer; }
   .cr-color-pair input[type='text'] { margin: 0; font-family: var(--font-mono); text-transform: uppercase; }
   .cr-warn { min-height: 1.2em; margin: -0.25rem 0 1rem; font-size: 0.75rem; color: #9A3412; }
+  .cr-aside {
+    max-width: 44rem;
+    margin: -1rem 0 2rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--color-accent);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+    font-style: italic;
+  }
   .cr-small { font-size: 0.75rem; line-height: 1.55; color: var(--color-muted); margin: 0.5rem 0; }
   .cr-small strong { color: var(--color-primary); }
   .cr-preview { margin: 1.25rem 0 0.75rem; overflow: auto; }
