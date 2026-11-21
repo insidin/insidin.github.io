@@ -1,49 +1,49 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { CREATION, REVIEW, SCALE_NAME } from '../../lib/cr-scale.js';
+import { MADE, CHECKED, SCALE_NAME, DEFAULT_INK, DEFAULT_PAPER } from '../../lib/mc-scale.js';
 
-const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
+const rows = MADE.map((m, i) => ({ m, c: CHECKED[i] }));
 ---
 
 <Layout
   title={`${SCALE_NAME} - Insidin`}
-  description="Understand a C/R indicator at a glance: C0 to C4 describe how AI contributed to creating content; R0 to R4 describe how a human reviewed the result."
+  description="Understand an AI MC label at a glance: M0 to M4 describe how AI contributed to making content; C0 to C4 describe how far a human checked the result."
 >
   <section class="pt-32 pb-24 px-6">
     <div class="max-w-5xl mx-auto">
       <!-- Header -->
       <div class="inline-flex items-center gap-2 mb-5">
         <span class="w-7 h-px bg-accent"></span>
-        <span class="mono-xs text-accent">Tool</span>
+        <span class="mono-xs text-accent">Scale</span>
       </div>
 
       <div class="flex items-center gap-5 mb-4">
-        <span class="cr-logo" aria-label="AI creation and review"><i>AI</i><b>c/r</b></span>
+        <span class="cr-logo" aria-label="AI Made/Checked"><i>AI</i><b>MC</b></span>
         <div>
           <h1 class="d-l text-primary">{SCALE_NAME}</h1>
-          <p class="b-m text-muted mt-1">How AI contributed to the content. How a human reviewed the result.</p>
+          <p class="b-m text-muted mt-1">How AI contributed to making the content. How far a human checked the result.</p>
         </div>
       </div>
 
       <p class="b-m text-muted mb-8" style="max-width:44rem">
-        A C/R label on a slide, document or post tells you two separate things: how AI contributed to creating the
-        content (C), and how thoroughly a person reviewed the final result (R). Find the meaning of any combination below.
+        An AI MC label on a slide, document or post tells you two separate things: how AI contributed to making the
+        content (M), and how far a person checked the final result (C). Find the meaning of any combination below.
       </p>
 
-      <!-- Personalised view: filled in from ?c=&r= by the script below -->
+      <!-- Personalised view: filled in from ?m=&c= by the script below -->
       <section id="your-badge" class="cr-your" hidden aria-live="polite">
         <p class="mono-xs text-accent mb-2">This badge</p>
         <h2 class="cr-your-title"><span id="yb-code"></span></h2>
         <div class="cr-your-grid">
           <div class="cr-your-c">
-            <span class="cr-your-cap">Creation</span>
-            <strong id="yb-c-name"></strong>
-            <p id="yb-c-text"></p>
+            <span class="cr-your-cap">Made</span>
+            <strong id="yb-m-name"></strong>
+            <p id="yb-m-text"></p>
           </div>
           <div class="cr-your-r">
-            <span class="cr-your-cap">Review</span>
-            <strong id="yb-r-name"></strong>
-            <p id="yb-r-text"></p>
+            <span class="cr-your-cap">Checked</span>
+            <strong id="yb-c-name"></strong>
+            <p id="yb-c-text"></p>
           </div>
         </div>
         <p id="yb-reader" class="cr-your-reader"></p>
@@ -53,30 +53,30 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
       <!-- Quick-reference table -->
       <table class="cr-table" id="scales">
         <caption class="cr-caption">
-          Find the C value and the R value separately. Together, they describe how the content was made and reviewed.
+          Find the M value and the C value separately. Together, they describe how the content was made and checked.
         </caption>
         <thead>
           <tr>
             <th scope="col" class="cr-th-c">
-              <span class="cr-th-title">C · Creation</span>
+              <span class="cr-th-title">M · Made</span>
               <span class="cr-th-sub">AI involvement alongside human input</span>
             </th>
             <th scope="col" class="cr-th-r">
-              <span class="cr-th-title">R · Review</span>
+              <span class="cr-th-title">C · Checked</span>
               <span class="cr-th-sub">Human examination of the final result</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ c, r }) => (
+          {rows.map(({ m, c }) => (
             <tr>
+              <td id={m.code.toLowerCase()}>
+                <div class="cr-cell-head"><b>{m.code}</b><strong>{m.name}</strong></div>
+                <p>{m.text}</p>
+              </td>
               <td id={c.code.toLowerCase()}>
                 <div class="cr-cell-head"><b>{c.code}</b><strong>{c.name}</strong></div>
                 <p>{c.text}</p>
-              </td>
-              <td id={r.code.toLowerCase()}>
-                <div class="cr-cell-head"><b>{r.code}</b><strong>{r.name}</strong></div>
-                <p>{r.text}</p>
               </td>
             </tr>
           ))}
@@ -85,8 +85,8 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
 
       <!-- Three notes -->
       <div class="cr-notes">
-        <p><strong>Two independent values.</strong> Any C can combine with any R. More AI involvement does not mean less human expertise.</p>
-        <p><strong>Human review only.</strong> AI can assist a reviewer. A check performed only by AI does not raise the R level.</p>
+        <p><strong>Two independent values.</strong> Any M can combine with any C. More AI involvement does not mean less human expertise.</p>
+        <p><strong>Human check only.</strong> AI can assist a person who checks. A check performed only by AI does not raise the C level.</p>
         <p><strong>Information, not certification.</strong> Apply the label to the final version and stated scope. It describes the process, without guaranteeing correctness.</p>
       </div>
 
@@ -95,13 +95,13 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
         <h2 class="d-m text-primary mb-3">What it tells you, and why it matters</h2>
         <div class="prose">
           <p>
-            This indicator separates <strong>AI involvement in creation</strong> from <strong>human review of the result</strong>.
+            This label separates <strong>how AI contributed to making the content</strong> from <strong>how far a human checked the result</strong>.
             A person can supply substantial knowledge and experience while AI writes most of the words. Equally, an
-            AI-originated draft can undergo thorough human review.
+            AI-originated draft can be thoroughly checked by a person.
           </p>
           <p>
-            A single "AI-generated" label hides those differences. C/R makes both visible, so readers can tell an unread
-            draft from content that someone has examined, checked and approved. It describes the process, not a quality
+            A single "AI-generated" label hides those differences. AI MC makes both visible, so readers can tell an unread
+            draft from content that someone has read, verified and approved. It describes the process, not a quality
             score or a percentage of human effort. It does not quantify intelligence, establish IP ownership or guarantee
             correctness.
           </p>
@@ -122,14 +122,14 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
             </tr>
             <tr>
               <td><strong>Opening or closing slide, or document introduction</strong></td>
-              <td>The disclosure panel or note: badge, creator and reviewer, scope, artifact version, review date, and any relevant checks or limitations.</td>
+              <td>The disclosure panel or note: badge, who made it and who checked it, scope, version, check date, and any relevant checks or limitations.</td>
             </tr>
           </tbody>
         </table>
         <div class="prose mt-4">
           <p>
             Where sections differ, label them separately rather than averaging. The badge is a link: the "i" shows that
-            it leads to an explanation of exactly that C and R combination. Screenshots and print lose links, which is why
+            it leads to an explanation of exactly that M and C combination. Screenshots and print lose links, which is why
             the caption always carries the scale name. In desktop PowerPoint or Word, insert the badge as a picture and
             add the hyperlink to the picture itself; links embedded in the SVG may not survive the import. Check the link
             again after exporting to PDF.
@@ -143,42 +143,50 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
         <div class="cr-gen-body">
           <div class="cr-row-2">
             <label>
-              <span class="cr-label">Creation</span>
-              <select id="c-select">
-                {CREATION.map((c, i) => <option value={i} selected={i === 2}>{c.code} · {c.name}</option>)}
+              <span class="cr-label">Made</span>
+              <select id="m-select">
+                {MADE.map((m, i) => <option value={i} selected={i === 2}>{m.code} · {m.name}</option>)}
               </select>
             </label>
             <label>
-              <span class="cr-label">Review</span>
-              <select id="r-select">
-                {REVIEW.map((r, i) => <option value={i} selected={i === 2}>{r.code} · {r.name}</option>)}
+              <span class="cr-label">Checked</span>
+              <select id="c-select">
+                {CHECKED.map((c, i) => <option value={i} selected={i === 2}>{c.code} · {c.name}</option>)}
               </select>
             </label>
           </div>
 
-          <div class="cr-row-2">
-          <label>
-            <span class="cr-label">Badge style</span>
-            <select id="style">
-              <option value="strip">Codes · AI c/r, C3, R4</option>
-              <option value="scales">Scales · shows the position on each scale</option>
-              <option value="seal">Seal · round, for corners and covers</option>
-            </select>
-          </label>
           <label>
             <span class="cr-label">Format</span>
             <select id="format">
-              <option value="compact">Badge · footer or margin</option>
+              <option value="badge">Badge · footer or margin</option>
               <option value="panel">Disclosure panel · slide or document section</option>
             </select>
           </label>
+
+          <div class="cr-colors">
+            <label>
+              <span class="cr-label">Badge colour <i>Replaces black</i></span>
+              <span class="cr-color-pair">
+                <input id="ink-picker" type="color" value={DEFAULT_INK} aria-label="Badge colour picker" />
+                <input id="ink" type="text" value={DEFAULT_INK} maxlength="7" spellcheck="false" aria-label="Badge colour as hex" />
+              </span>
+            </label>
+            <label>
+              <span class="cr-label">Background <i>Replaces white</i></span>
+              <span class="cr-color-pair">
+                <input id="paper-picker" type="color" value={DEFAULT_PAPER} aria-label="Background colour picker" />
+                <input id="paper" type="text" value={DEFAULT_PAPER} maxlength="7" spellcheck="false" aria-label="Background colour as hex" />
+              </span>
+            </label>
           </div>
+          <p id="contrast" class="cr-warn" role="status"></p>
 
           <div class="cr-row-2">
-            <label><span class="cr-label">Creator <i>Optional</i></span><input id="creator" maxlength="100" placeholder="Person who shaped the content" /></label>
-            <label><span class="cr-label">Human reviewer <i>Optional</i></span><input id="reviewer" maxlength="100" placeholder="Person who performed the review" /></label>
-            <label><span class="cr-label">Artifact version <i>Optional</i></span><input id="artifact" maxlength="120" placeholder="e.g. Strategy paper v1.2" /></label>
-            <label><span class="cr-label">Review date <i>Optional</i></span><input id="review-date" type="date" /></label>
+            <label><span class="cr-label">Made by <i>Optional</i></span><input id="made-by" maxlength="100" placeholder="Person who shaped the content" /></label>
+            <label><span class="cr-label">Checked by <i>Optional</i></span><input id="checked-by" maxlength="100" placeholder="Person who checked the result" /></label>
+            <label><span class="cr-label">Version <i>Optional</i></span><input id="artifact" maxlength="120" placeholder="e.g. Strategy paper v1.2" /></label>
+            <label><span class="cr-label">Check date <i>Optional</i></span><input id="check-date" type="date" /></label>
           </div>
           <label><span class="cr-label">Scope <i>Optional</i></span><input id="scope" maxlength="250" placeholder="e.g. Main text and diagrams; appendix excluded" /></label>
           <label><span class="cr-label">Intended use <i>Optional</i></span><input id="purpose" maxlength="250" placeholder="e.g. Architecture discussion" /></label>
@@ -186,7 +194,7 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
 
           <p class="cr-small">
             Everything is processed in your browser; nothing is sent or stored. The generator does not verify anyone's
-            review: a blank field makes no claim. The badge itself carries only the two values. Names and other details
+            check: a blank field makes no claim. The badge itself carries only the two values. Names and other details
             appear in the disclosure panel and in the text below.
           </p>
 
@@ -196,6 +204,15 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
           <span class="cr-label">Hyperlink for the badge</span>
           <pre id="link" class="cr-note"></pre>
 
+          <label>
+            <span class="cr-label">PNG size</span>
+            <select id="png-scale">
+              <option value="2">2x · screen and email</option>
+              <option value="4" selected>4x · slides and documents (recommended)</option>
+              <option value="8">8x · print and posters</option>
+            </select>
+          </label>
+
           <div class="cr-actions">
             <button id="download-svg" type="button">Download SVG</button>
             <button id="download-png" type="button" class="secondary">Download PNG</button>
@@ -204,8 +221,9 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
           </div>
           <p id="status" class="cr-status" role="status"></p>
           <p class="cr-small">
-            Use PNG where SVG is not supported (older Office versions). A PNG or SVG pasted into a document needs the
-            hyperlink added to the picture; copy it from above. Keep the caption with the badge.
+            Prefer SVG: it stays sharp at any size, and the letters in the badge are outlined, so it looks the same
+            everywhere. Use PNG where SVG is not accepted (Google Slides, older Office, email, social media). Either
+            needs the hyperlink added to the picture; copy it from above. Keep the caption with the badge.
           </p>
         </div>
       </details>
@@ -215,35 +233,43 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
         <h2 class="d-m text-primary mb-3">Questions &amp; answers</h2>
         <div class="cr-faq">
           <details>
-            <summary>Does a review by another AI count?</summary>
-            <p>R measures human review. Another AI can help find issues, but an AI-only check does not raise the R level. Choose the level that matches what a person actually examined and checked.</p>
+            <summary>Does a check by another AI count?</summary>
+            <p>C measures what a person did. Another AI can help find issues, but an AI-only check does not raise the C level. Choose the level that matches what a person actually read and checked.</p>
           </details>
           <details>
             <summary>Does more AI involvement mean less human expertise?</summary>
-            <p>No. C3 explicitly recognises substantial human knowledge, experience and reasoning, expressed through AI. The creation categories do not rank intelligence or professional value.</p>
+            <p>No. M3 explicitly recognises substantial human knowledge, experience and reasoning, expressed through AI. The made categories do not rank intelligence or professional value.</p>
           </details>
           <details>
-            <summary>Does R4 guarantee correctness?</summary>
-            <p>No. It means full human review, relevant checks and approval for sharing. It is a process declaration, not certification or a promise that every claim is error-free.</p>
+            <summary>Does C4 guarantee correctness?</summary>
+            <p>No. It means a full read-through, relevant checks and approval for sharing. It is a process declaration, not certification or a promise that every claim is error-free.</p>
           </details>
           <details>
-            <summary>What if the content changes, or only some sections were reviewed?</summary>
-            <p>Apply the label to a specific final version and scope. Reassess the review after substantive edits. Label materially different sections separately rather than averaging their levels.</p>
+            <summary>What if the content changes, or only some sections were checked?</summary>
+            <p>Apply the label to a specific final version and scope. Reassess the check after substantive edits. Label materially different sections separately rather than averaging their levels.</p>
           </details>
           <details>
             <summary>Should I add names, and why does every badge link here?</summary>
-            <p>A reviewer or creator name is optional, but useful when the badge may travel separately from the document. They are different roles, so the badge states which one it shows. The link is fixed on purpose, and carries only the C and R values, so a reader lands on the explanation of exactly that label. Names and other details never travel in the link.</p>
+            <p>A name is optional, but useful when the badge may travel separately from the document. Who made it and who checked it are different roles, so the panel states each one. The link is fixed on purpose, and carries only the M and C values, so a reader lands on the explanation of exactly that label. Names and other details never travel in the link.</p>
+          </details>
+          <details>
+            <summary>Can I change the colours?</summary>
+            <p>Yes. The generator lets you replace the black with a colour of your choice, for example a company colour, and the white with a background that fits your template. Keep enough contrast for the badge to stay readable, and the generator warns you when it does not. The values and their meaning never change with the colour.</p>
+          </details>
+          <details>
+            <summary>Which file format should I use?</summary>
+            <p>SVG where it is supported, because it stays sharp at any size. For Google Slides, older Office versions, email and social media, use the PNG at 4x or 8x. In both cases, add the hyperlink to the picture and keep the caption beside it as normal text.</p>
           </details>
           <details>
             <summary>How was this explanation created?</summary>
-            <p><strong>C3/R4, as declared by Jan Uyttenhove.</strong> Human direction and expertise shaped the explanation; AI assisted research, drafting and implementation. The review declaration concerns the explanation, not independent certification or testing of the website code.</p>
+            <p><strong>M3/C4, as declared by Jan Uyttenhove.</strong> Human direction and expertise shaped the explanation; AI assisted research, drafting and implementation. The declaration concerns the explanation, not independent certification or testing of the website code.</p>
           </details>
         </div>
       </section>
 
       <!-- Declaration and licence -->
       <div class="cr-declaration">
-        <p><strong>This explanation: C3/R4.</strong> Declared by Jan Uyttenhove.</p>
+        <p><strong>This explanation: M3/C4.</strong> Declared by Jan Uyttenhove.</p>
         <p>
           © 2026 Insidin BV ·
           <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>
@@ -441,6 +467,11 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
   .cr-gen-body input:focus,
   .cr-gen-body textarea:focus { outline: 2px solid var(--color-accent); outline-offset: 1px; border-color: var(--color-accent); }
 
+  .cr-colors { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  .cr-color-pair { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.35rem; }
+  .cr-color-pair input[type='color'] { width: 2.75rem; height: 2.4rem; padding: 0.15rem; margin: 0; flex-shrink: 0; cursor: pointer; }
+  .cr-color-pair input[type='text'] { margin: 0; font-family: var(--font-mono); text-transform: uppercase; }
+  .cr-warn { min-height: 1.2em; margin: -0.25rem 0 1rem; font-size: 0.75rem; color: #9A3412; }
   .cr-small { font-size: 0.75rem; line-height: 1.55; color: var(--color-muted); margin: 0.5rem 0; }
   .cr-small strong { color: var(--color-primary); }
   .cr-preview { margin: 1.25rem 0 0.75rem; overflow: auto; }
@@ -516,7 +547,7 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
     .cr-cell-head strong { font-size: 0.8125rem; }
     .cr-table td p { margin: 0.3rem 0 0; font-size: 0.7rem; line-height: 1.4; }
     .cr-notes { grid-template-columns: 1fr; gap: 0.75rem; }
-    .cr-row-2 { grid-template-columns: 1fr; }
+    .cr-row-2, .cr-colors { grid-template-columns: 1fr; }
     .cr-your-grid { grid-template-columns: 1fr; }
     .cr-placement td:first-child { width: 35%; }
     .cr-logo { width: 48px; height: 48px; }
@@ -531,22 +562,29 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
 </style>
 
 <script>
-  import { makeSVG, noteFor } from '../../lib/cr-badge.js';
-  import * as cr from '../../lib/cr-scale.js';
+  import { makeSVG, noteFor } from '../../lib/mc-badge.js';
+  import * as mc from '../../lib/mc-scale.js';
 
   const $ = (id: string) => document.getElementById(id) as HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement;
-  const fields = ['c-select', 'r-select', 'style', 'format', 'creator', 'reviewer', 'artifact', 'review-date', 'scope', 'purpose', 'checks'];
+  const fields = [
+    'm-select', 'c-select', 'format', 'ink', 'paper', 'made-by', 'checked-by',
+    'artifact', 'check-date', 'scope', 'purpose', 'checks',
+  ];
+
+  // Colours: a valid #RRGGBB in the text field wins, otherwise the default.
+  const colour = (id: string, fallback: string) => (mc.isHex($(id).value.trim()) ? $(id).value.trim().toUpperCase() : fallback);
 
   function data() {
     return {
+      m: Number($('m-select').value),
       c: Number($('c-select').value),
-      r: Number($('r-select').value),
-      style: $('style').value,
       format: $('format').value,
-      creator: $('creator').value.trim(),
-      reviewer: $('reviewer').value.trim(),
+      ink: colour('ink', mc.DEFAULT_INK),
+      paper: colour('paper', mc.DEFAULT_PAPER),
+      madeBy: $('made-by').value.trim(),
+      checkedBy: $('checked-by').value.trim(),
       artifact: $('artifact').value.trim(),
-      date: $('review-date').value,
+      date: $('check-date').value,
       scope: $('scope').value.trim(),
       purpose: $('purpose').value.trim(),
       checks: $('checks').value.trim(),
@@ -555,14 +593,23 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
 
   function render() {
     const d = data();
-    // Without a review there is no reviewer and no review date.
-    $('reviewer').disabled = d.r === 0;
-    $('review-date').disabled = d.r === 0;
+    // With nothing checked there is no checker and no check date.
+    $('checked-by').disabled = d.c === 0;
+    $('check-date').disabled = d.c === 0;
+
+    const bad = ['ink', 'paper'].filter((id) => $(id).value.trim() && !mc.isHex($(id).value.trim()));
+    const ratio = mc.contrast(d.ink, d.paper);
+    $('contrast').textContent = bad.length
+      ? 'Use a colour in the form #RRGGBB. The default is used until it is valid.'
+      : ratio < 3
+        ? `Low contrast (${ratio.toFixed(1)}:1). The badge may be hard to read; pick a darker colour or a lighter background.`
+        : '';
+
     const svg = makeSVG(d);
     const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
     $('badge').replaceChildren(document.importNode(doc.documentElement, true));
     $('disclosure').textContent = noteFor(d);
-    $('link').textContent = cr.referenceFor(d.c, d.r);
+    $('link').textContent = mc.referenceFor(d.m, d.c);
   }
 
   function save(blob: Blob, filename: string) {
@@ -574,12 +621,24 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  const filename = (d: ReturnType<typeof data>, ext: string) => `ai-creation-review-C${d.c}-R${d.r}-${d.style}-${d.format}.${ext}`;
+  const filename = (d: ReturnType<typeof data>, ext: string) => `ai-made-checked-M${d.m}-C${d.c}-${d.format}.${ext}`;
 
   for (const id of fields) {
     $(id).addEventListener('input', () => {
       $('status').textContent = '';
       render();
+    });
+  }
+
+  // Colour pickers and hex fields stay in sync.
+  for (const id of ['ink', 'paper']) {
+    $(`${id}-picker`).addEventListener('input', () => {
+      $(id).value = $(`${id}-picker`).value.toUpperCase();
+      $('status').textContent = '';
+      render();
+    });
+    $(id).addEventListener('input', () => {
+      if (mc.isHex($(id).value.trim())) $(`${id}-picker`).value = $(id).value.trim();
     });
   }
 
@@ -595,7 +654,7 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
   $('copy-link').addEventListener('click', async () => {
     const d = data();
     try {
-      await navigator.clipboard.writeText(cr.referenceFor(d.c, d.r));
+      await navigator.clipboard.writeText(mc.referenceFor(d.m, d.c));
       $('status').textContent = 'Link copied. Add it as the hyperlink on the badge picture.';
     } catch {
       $('status').textContent = 'Clipboard unavailable. Select and copy the link above.';
@@ -610,11 +669,10 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
 
   $('download-png').addEventListener('click', () => {
     const d = data();
-    const svg = makeSVG(d);
-    const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+    const scale = Number($('png-scale').value) || 4;
+    const url = URL.createObjectURL(new Blob([makeSVG(d)], { type: 'image/svg+xml' }));
     const img = new Image();
     img.onload = () => {
-      const scale = 2;
       const canvas = document.createElement('canvas');
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
@@ -626,7 +684,7 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
       canvas.toBlob((blob) => {
         if (!blob) return;
         save(blob, filename(d, 'png'));
-        $('status').textContent = 'PNG downloaded. Add the hyperlink to the inserted picture; PNG files carry no link themselves.';
+        $('status').textContent = `PNG downloaded at ${scale}x (${canvas.width} px wide). Add the hyperlink to the inserted picture; PNG files carry no link themselves.`;
       }, 'image/png');
     };
     img.onerror = () => {
@@ -636,28 +694,28 @@ const rows = CREATION.map((c, i) => ({ c, r: REVIEW[i] }));
     img.src = url;
   });
 
-  // Personalised view: ?c=3&r=4 shows the meaning of that exact badge and highlights it in the table.
+  // Personalised view: ?m=3&c=4 shows the meaning of that exact badge and highlights it in the table.
   const params = new URLSearchParams(location.search);
+  const pm = params.get('m');
   const pc = params.get('c');
-  const pr = params.get('r');
-  if (pc !== null && pr !== null && /^[0-4]$/.test(pc) && /^[0-4]$/.test(pr)) {
+  if (pm !== null && pc !== null && /^[0-4]$/.test(pm) && /^[0-4]$/.test(pc)) {
+    const mi = Number(pm);
     const ci = Number(pc);
-    const ri = Number(pr);
     const el = (id: string) => document.getElementById(id) as HTMLElement;
     const row = (code: string) => document.getElementById(code.toLowerCase());
-    el('yb-code').textContent = `C${ci} / R${ri}`;
-    el('yb-c-name').textContent = cr.CREATION[ci].name;
-    el('yb-c-text').textContent = cr.CREATION[ci].text;
-    el('yb-r-name').textContent = cr.REVIEW[ri].name;
-    el('yb-r-text').textContent = cr.REVIEW[ri].text;
-    el('yb-reader').textContent = `In short: ${cr.CREATION[ci].name.toLowerCase()} content. ${cr.REVIEW[ri].reader}`;
+    el('yb-code').textContent = `M${mi} / C${ci}`;
+    el('yb-m-name').textContent = mc.MADE[mi].name;
+    el('yb-m-text').textContent = mc.MADE[mi].text;
+    el('yb-c-name').textContent = mc.CHECKED[ci].name;
+    el('yb-c-text').textContent = mc.CHECKED[ci].text;
+    el('yb-reader').textContent = `In short: ${mc.MADE[mi].name.toLowerCase()} content. ${mc.CHECKED[ci].reader}`;
     el('your-badge').hidden = false;
+    row(`M${mi}`)?.classList.add('cr-on');
     row(`C${ci}`)?.classList.add('cr-on');
-    row(`R${ri}`)?.classList.add('cr-on');
     // Preselect the generator so the visitor can build the same badge.
+    $('m-select').value = String(mi);
     $('c-select').value = String(ci);
-    $('r-select').value = String(ri);
-    document.title = `C${ci}/R${ri} · ${cr.CREATION[ci].name}, ${cr.REVIEW[ri].name} - Insidin`;
+    document.title = `M${mi}/C${ci} · ${mc.MADE[mi].name}, ${mc.CHECKED[ci].name} - Insidin`;
   }
 
   render();
